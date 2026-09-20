@@ -219,6 +219,10 @@ void InjectorView::Render(bool& shouldClose)
 		ImGui::InputText("##dll-file", dllPathInput.data(), dllPathInput.size(), ImGuiInputTextFlags_ReadOnly);
 		ImGui::SameLine();
 		if (ImGui::Button("Browse", ImVec2(82.0f, 0.0f))) OpenModFileDialog();
+		ImGui::Spacing();
+		ImGui::TextDisabled("METHOD OF INJECTION");
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(0.55f, 0.78f, 1.0f, 1.0f), "%s", state.injectionMethod.c_str());
 		ImGui::EndChild();
 	}
 

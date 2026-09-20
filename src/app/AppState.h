@@ -8,6 +8,7 @@ struct AppState
 	std::string target;
 	std::string targetName;
 	std::string dllPath;
+	std::string injectionMethod = "Simple";
 	std::string status = "Ready";
 	std::size_t bytesWritten = 0;
 	std::size_t totalBytes = 0;
