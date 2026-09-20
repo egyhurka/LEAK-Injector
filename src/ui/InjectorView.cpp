@@ -50,8 +50,7 @@ namespace
 	}
 }
 
-InjectorView::InjectorView(SDL_Window* parentWindow, AppController& appController, AppState& appState)
-	: window(parentWindow), controller(appController), state(appState)
+InjectorView::InjectorView(SDL_Window* parentWindow, AppController& appController, AppState& appState) : window(parentWindow), controller(appController), state(appState)
 {
 	ApplyStyle();
 	LoadFonts();
@@ -64,8 +63,12 @@ void InjectorView::OnFileSelected(void* userdata, const char* const* fileList, i
 		return;
 
 	std::scoped_lock lock(view->selectionMutex);
+
 	view->selectedPath = fileList[0];
-	view->hasSelectedPath = true;
+	if (view->selectedPath.ends_with(".dll"))
+		view->hasSelectedPath = true;
+	else
+		view->selectedPath = "";
 }
 
 void InjectorView::OpenModFileDialog()
@@ -101,15 +104,55 @@ void InjectorView::RenderProcessFinder()
 	if (!showProcessFinder)
 		return;
 
-	ImGui::SetNextWindowSize(ImVec2(420.0f, 360.0f), ImGuiCond_FirstUseEver);
-	if (!ImGui::Begin("Find process", &showProcessFinder))
+	ImGui::OpenPopup("Find process");
+	ImGui::SetNextWindowPos(ImVec2(24.0f, 64.0f), ImGuiCond_Appearing);
+
+	if (focusProcessFinder)
 	{
-		ImGui::End();
+		ImGui::SetNextWindowFocus();
+		focusProcessFinder = false;
+	}
+
+	ImGui::SetNextWindowSize(ImVec2(520.0f, 480.0f), ImGuiCond_Appearing);
+
+	if (!ImGui::BeginPopupModal("Find process", &showProcessFinder, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize))
+		return;
+
+	const float titleBarWidth = ImGui::GetContentRegionAvail().x - 42.0f;
+	const ImVec2 titlePosition = ImGui::GetCursorScreenPos();
+	ImGui::InvisibleButton("##process-drag", ImVec2(titleBarWidth, 32.0f));
+
+	if (ImGui::IsItemActive())
+	{
+		const ImVec2 windowPosition = ImGui::GetWindowPos();
+		const ImVec2 mouseDelta = ImGui::GetIO().MouseDelta;
+		ImGui::SetWindowPos(ImVec2(windowPosition.x + mouseDelta.x, windowPosition.y + mouseDelta.y));
+	}
+
+	ImGui::SameLine(0.0f, 8.0f);
+	const ImVec2 closePosition = ImGui::GetCursorScreenPos();
+	ImGui::InvisibleButton("##process-close", ImVec2(32.0f, 28.0f));
+	ImDrawList* processDrawList = ImGui::GetWindowDrawList();
+
+	if (ImGui::IsItemHovered())
+		processDrawList->AddRectFilled(closePosition, ImVec2(closePosition.x + 32.0f, closePosition.y + 28.0f), ImGui::GetColorU32(ImVec4(0.55f, 0.19f, 0.23f, 1.0f)), 5.0f);
+	
+	processDrawList->AddLine(ImVec2(closePosition.x + 11.0f, closePosition.y + 9.0f), ImVec2(closePosition.x + 21.0f, closePosition.y + 19.0f), ImGui::GetColorU32(ImGuiCol_TextDisabled), 1.5f);
+	processDrawList->AddLine(ImVec2(closePosition.x + 21.0f, closePosition.y + 9.0f), ImVec2(closePosition.x + 11.0f, closePosition.y + 19.0f), ImGui::GetColorU32(ImGuiCol_TextDisabled), 1.5f);
+	
+	if (ImGui::IsItemClicked())
+	{
+		showProcessFinder = false;
+		ImGui::CloseCurrentPopup();
+		ImGui::EndPopup();
 		return;
 	}
+	ImGui::GetWindowDrawList()->AddText(ImVec2(titlePosition.x + 8.0f, titlePosition.y + 7.0f), ImGui::GetColorU32(ImGuiCol_Text), "Find process");
+	ImGui::Separator();
 
 	if (ImGui::Button("Refresh"))
 		RefreshProcesses();
+
 	ImGui::SameLine();
 	ImGui::TextDisabled("%zu running processes", processes.size());
 	ImGui::SetNextItemWidth(-1.0f);
@@ -117,8 +160,7 @@ void InjectorView::RenderProcessFinder()
 	ImGui::Separator();
 
 	std::string query(processSearch.data());
-	std::transform(query.begin(), query.end(), query.begin(),
-		[](unsigned char character) { return static_cast<char>(std::tolower(character)); });
+	std::transform(query.begin(), query.end(), query.begin(), [](unsigned char character) { return static_cast<char>(std::tolower(character)); });
 
 	if (ImGui::BeginChild("##process-list", ImVec2(0.0f, 0.0f), ImGuiChildFlags_Borders))
 	{
@@ -143,14 +185,13 @@ void InjectorView::RenderProcessFinder()
 		}
 		ImGui::EndChild();
 	}
-	ImGui::End();
+	ImGui::EndPopup();
 }
 
 void InjectorView::Render(bool& shouldClose)
 {
 	controller.Dispatch(AppController::UiAction::Update);
 	ApplySelectedFile();
-	RenderProcessFinder();
 	const ImVec2 displaySize = ImGui::GetIO().DisplaySize;
 	ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
 	ImGui::SetNextWindowSize(displaySize);
@@ -159,6 +200,7 @@ void InjectorView::Render(bool& shouldClose)
 	ImDrawList* drawList = ImGui::GetWindowDrawList();
 	const ImVec2 position = ImGui::GetWindowPos();
 	const ImVec2 size = ImGui::GetWindowSize();
+
 	drawList->AddRectFilled(position, ImVec2(position.x + size.x, position.y + TitleBarHeight), ImGui::GetColorU32(ImVec4(0.055f, 0.075f, 0.13f, 1.00f)));
 	drawList->AddRectFilled(ImVec2(position.x, position.y), ImVec2(position.x + 170.0f, position.y + 2.0f), ImGui::GetColorU32(ImVec4(0.30f, 0.68f, 1.00f, 1.00f)));
 	drawList->AddLine(ImVec2(position.x, position.y + TitleBarHeight), ImVec2(position.x + size.x, position.y + TitleBarHeight), ImGui::GetColorU32(ImGuiCol_Border));
@@ -188,8 +230,7 @@ void InjectorView::Render(bool& shouldClose)
 	drawList->AddLine(ImVec2(closePosition.x + 18.0f, closePosition.y + 10.0f), ImVec2(closePosition.x + 10.0f, closePosition.y + 18.0f), ImGui::GetColorU32(ImGuiCol_TextDisabled), 1.5f);
 
 	ImGui::SetCursorPos(ImVec2(18.0f, TitleBarHeight + 18.0f));
-	if (ImGui::BeginChild("##config-card", ImVec2(size.x - 36.0f, 248.0f), true,
-		ImGuiWindowFlags_NoScrollbar))
+	if (ImGui::BeginChild("##config-card", ImVec2(size.x - 36.0f, 248.0f), true, ImGuiWindowFlags_NoScrollbar))
 	{
 		ImGui::TextColored(ImVec4(0.38f, 0.76f, 1.0f, 1.0f), "CONFIGURATION");
 		ImGui::SameLine();
@@ -205,6 +246,7 @@ void InjectorView::Render(bool& shouldClose)
 		{
 			RefreshProcesses();
 			showProcessFinder = true;
+			focusProcessFinder = true;
 		}
 		if (!state.targetName.empty())
 		{
@@ -227,8 +269,7 @@ void InjectorView::Render(bool& shouldClose)
 	}
 
 	ImGui::SetCursorPos(ImVec2(18.0f, TitleBarHeight + 282.0f));
-	if (ImGui::BeginChild("##action-card", ImVec2(size.x - 36.0f, 156.0f), true,
-		ImGuiWindowFlags_NoScrollbar))
+	if (ImGui::BeginChild("##action-card", ImVec2(size.x - 36.0f, 156.0f), true, ImGuiWindowFlags_NoScrollbar))
 	{
 		const bool ready = targetInput.front() != '\0' && dllPathInput.front() != '\0';
 		ImGui::TextColored(ImVec4(0.38f, 0.76f, 1.0f, 1.0f), "OPERATION");
@@ -263,5 +304,6 @@ void InjectorView::Render(bool& shouldClose)
 
 	ImGui::SetCursorPos(ImVec2(18.0f, size.y - 30.0f));
 	ImGui::TextDisabled("LEAK  /  %s", leak::app::Metadata.build);
+	RenderProcessFinder();
 	ImGui::End();
 }

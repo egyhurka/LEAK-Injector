@@ -32,6 +32,7 @@ private:
 	std::string selectedPath;
 	bool hasSelectedPath = false;
 	bool showProcessFinder = false;
+	bool focusProcessFinder = false;
 	std::array<char, 260> processSearch{};
 	std::vector<injector::process::ProcessEntry> processes{};
 };

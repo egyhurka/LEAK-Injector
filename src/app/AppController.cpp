@@ -19,6 +19,12 @@ void AppController::SetDllPath(std::string dllPath)
 	state.dllPath = std::move(dllPath);
 	if (!state.dllPath.empty())
 	{
+		if (!state.dllPath.ends_with(".dll"))
+		{
+			state.dllPath.clear();
+			return;
+		}
+
 		state.status = "File selected";
 		injector.LoadDllPath(std::wstring(state.dllPath.begin(), state.dllPath.end()));
 	}
@@ -28,8 +34,8 @@ void AppController::Dispatch(const UiAction action)
 {
 	switch (action)
 	{
-	case UiAction::ValidateTarget:
-	{
+		case UiAction::ValidateTarget:
+		{
 			try
 			{
 				const DWORD pid = static_cast<DWORD>(std::stoul(state.target));
@@ -43,14 +49,14 @@ void AppController::Dispatch(const UiAction action)
 			break;
 		}
 
-	case UiAction::SelectDll:
-	{
-			state.status = "Select the DLL file";
-			break;
+		case UiAction::SelectDll:
+		{
+				state.status = "Select the DLL file";
+				break;
 		}
 	
-	case UiAction::Inject:
-	{
+		case UiAction::Inject:
+		{
 			if (state.busy)
 				break;
 
@@ -64,18 +70,20 @@ void AppController::Dispatch(const UiAction action)
 			break;
 		}
 
-	case UiAction::Clear:
-		state.target.clear();
-		state.targetName.clear();
-		state.dllPath.clear();
-		state.status = "Ready";
-		state.bytesWritten = 0;
-		state.totalBytes = 0;
-		state.progress = 0.0f;
-		break;
+		case UiAction::Clear:
+		{
+			state.target.clear();
+			state.targetName.clear();
+			state.dllPath.clear();
+			state.status = "Ready";
+			state.bytesWritten = 0;
+			state.totalBytes = 0;
+			state.progress = 0.0f;
+			break;
+		}
 
-	case UiAction::Update:
-	{
+		case UiAction::Update:
+		{
 			if (!state.busy || !injectionTask.valid())
 				break;
 
