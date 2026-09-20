@@ -1,33 +1,83 @@
-# Prerequisites
+# Visual Studio user and cache files
+.vs/
 *.d
+*.suo
+*.user
+*.userosscache
+*.sdf
+*.VC.db
+*.VC.VC.opendb
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
+# Visual Studio build output
+Debug/
+Release/
+x64/
+x86/
+ARM/
+ARM64/
+build/
+out/
+bin/
+obj/
+ipch/
+
+# MSBuild generated files
+*.tlog
+*.lastbuildstate
+*.log
+*.pdb
+*.ilk
+*.idb
+*.iobj
+*.ipdb
+*.res
+*.rsp
+*.manifest
+
+# C/C++ compiled objects and precompiled headers
 *.obj
-
-# Precompiled Headers
-*.gch
+*.o
+*.lo
+*.slo
 *.pch
+*.gch
 
-# Compiled Dynamic libraries
+# Libraries and binaries
+*.exe
+*.lib
+*.a
+*.la
+*.lai
 *.so
 *.dylib
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
 *.out
 *.app
-*.slnx
-*.vcx*
+
+# Generated code and intermediate files
+*.cache
+*.sbr
+*.bsc
+*.exp
+*.pdb
+*.idb
+
+# CMake generated files (if used later)
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+
+# Test and coverage output
+TestResults/
+*.coverage
+*.coveragexml
+
+# Windows and editor files
+Thumbs.db
+Desktop.ini
+.vscode/
+
+# Local environment files
+.env
+.env.*
+!.env.example
