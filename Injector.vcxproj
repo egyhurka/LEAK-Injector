@@ -124,7 +124,7 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>D:\Projects\Cpp\LEAK Injector\src\core;D:\Projects\Cpp\LEAK Injector\src;$(ProjectDir)third_party\SDL-release-3.4.16\include;$(ProjectDir)third_party\imgui-1.92.9b;$(ProjectDir)third_party\imgui-1.92.9b\backends;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src\core;$(ProjectDir)src;$(ProjectDir)third_party\SDL-release-3.4.16\include;$(ProjectDir)third_party\imgui-1.92.9b;$(ProjectDir)third_party\imgui-1.92.9b\backends;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -161,7 +161,8 @@
       <EnableSegmentHeap>true</EnableSegmentHeap>
     </Manifest>
     <PostBuildEvent>
-      <Command></Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

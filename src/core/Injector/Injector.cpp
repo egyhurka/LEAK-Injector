@@ -15,11 +15,27 @@ void Injector::LoadDllPath(const std::wstring& path)
 	dllPathSize = process::GetRemotePathSize(dllPath);
 }
 
-bool Injector::Inject()
+bool Injector::Inject(InjectionMethod method)
 {
-	bytesWritten = 0;
 	if (processId == 0 || dllPath.empty())
 		return false;
+
+	switch (method)
+	{
+		case Standard_LoadLibrary:
+			return StandardLoadLibraryInjection();
+			break;
+		case Thread_Hijacking:
+		case Manual_Mapping:
+			break;
+	}
+
+	return false;
+}
+
+bool Injector::StandardLoadLibraryInjection()
+{
+	bytesWritten = 0;
 
 	HANDLE process = process::Open(processId);
 
@@ -49,6 +65,16 @@ bool Injector::Inject()
 	(void)process::FreeRemotePath(process, remotePath);
 	process::Close(process);
 	return succeeded;
+}
+
+bool Injector::ThreadHijackingInjection()
+{
+	return false;
+}
+
+bool Injector::ManualMappingInjection()
+{
+	return false;
 }
 
 }

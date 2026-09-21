@@ -4,13 +4,20 @@
 
 namespace injector
 {
+	enum InjectionMethod
+	{
+		Standard_LoadLibrary = 0,
+		Thread_Hijacking = 1,
+		Manual_Mapping = 2
+	};
+
 	class Injector
 	{
 	public:
 		void LoadProcessId(DWORD processId);
 		void LoadDllPath(const std::wstring& path);
 
-		[[nodiscard]] bool Inject();
+		[[nodiscard]] bool Inject(InjectionMethod method = Standard_LoadLibrary);
 		[[nodiscard]] SIZE_T BytesWritten() const noexcept { return bytesWritten; }
 		[[nodiscard]] SIZE_T TotalBytes() const noexcept { return dllPathSize; }
 
@@ -19,5 +26,9 @@ namespace injector
 		SIZE_T dllPathSize = 0;
 		SIZE_T bytesWritten = 0;
 		std::wstring dllPath;
+
+		[[nodiscard]] bool StandardLoadLibraryInjection();
+		[[nodiscard]] bool ThreadHijackingInjection();
+		[[nodiscard]] bool ManualMappingInjection();
 	};
 }
