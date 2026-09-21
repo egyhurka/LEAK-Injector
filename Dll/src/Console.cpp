@@ -3,15 +3,26 @@
 #include <cstdio>
 #include <Windows.h>
 
-void leak::console::Init()
-{
-	AllocConsole();
-	FILE* file;
-	freopen_s(&file, "CONOUT$", "w", stdout);
-}
+namespace leak::console {
+    FILE* file = nullptr;
 
-void leak::console::Close()
-{
-	fclose(stdout);
-	FreeConsole();
+    void Init()
+    {
+        if (file != nullptr) {
+            fclose(file);
+            file = nullptr;
+        }
+        
+        AllocConsole();
+        freopen_s(&file, "CONOUT$", "w", stdout);
+    }
+
+    void Close()
+    {
+        if (file != nullptr) {
+            fclose(file);
+            file = nullptr;
+        }
+        FreeConsole();
+    }
 }
