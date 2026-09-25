@@ -162,7 +162,8 @@ void InjectorView::RenderProcessFinder()
 	std::string query(processSearch.data());
 	std::transform(query.begin(), query.end(), query.begin(), [](unsigned char character) { return static_cast<char>(std::tolower(character)); });
 
-	if (ImGui::BeginChild("##process-list", ImVec2(0.0f, 0.0f), ImGuiChildFlags_Borders))
+	const bool processListVisible = ImGui::BeginChild("##process-list", ImVec2(0.0f, 0.0f), ImGuiChildFlags_Borders);
+	if (processListVisible)
 	{
 		for (const injector::process::ProcessEntry& process : processes)
 		{
@@ -183,8 +184,8 @@ void InjectorView::RenderProcessFinder()
 				showProcessFinder = false;
 			}
 		}
-		ImGui::EndChild();
 	}
+	ImGui::EndChild();
 	ImGui::EndPopup();
 }
 
@@ -230,7 +231,8 @@ void InjectorView::Render(bool& shouldClose)
 	drawList->AddLine(ImVec2(closePosition.x + 18.0f, closePosition.y + 10.0f), ImVec2(closePosition.x + 10.0f, closePosition.y + 18.0f), ImGui::GetColorU32(ImGuiCol_TextDisabled), 1.5f);
 
 	ImGui::SetCursorPos(ImVec2(18.0f, TitleBarHeight + 18.0f));
-	if (ImGui::BeginChild("##config-card", ImVec2(size.x - 36.0f, 248.0f), true, ImGuiWindowFlags_NoScrollbar))
+	const bool configCardVisible = ImGui::BeginChild("##config-card", ImVec2(size.x - 36.0f, 248.0f), true, ImGuiWindowFlags_NoScrollbar);
+	if (configCardVisible)
 	{
 		ImGui::TextColored(ImVec4(0.38f, 0.76f, 1.0f, 1.0f), "CONFIGURATION");
 		ImGui::SameLine();
@@ -257,19 +259,25 @@ void InjectorView::Render(bool& shouldClose)
 		}
 
 		ImGui::TextDisabled("DLL FILE");
-		ImGui::SetNextItemWidth(-102.0f);
+		ImGui::SetNextItemWidth(-194.0f);
 		ImGui::InputText("##dll-file", dllPathInput.data(), dllPathInput.size(), ImGuiInputTextFlags_ReadOnly);
 		ImGui::SameLine();
 		if (ImGui::Button("Browse", ImVec2(82.0f, 0.0f))) OpenModFileDialog();
+		ImGui::SameLine();
+		ImGui::BeginDisabled(state.busy || state.dllPath.empty());
+		if (ImGui::Button("Reload", ImVec2(82.0f, 0.0f)))
+			controller.Dispatch(AppController::UiAction::ReloadDll);
+		ImGui::EndDisabled();
 		ImGui::Spacing();
 		ImGui::TextDisabled("METHOD OF INJECTION");
 		ImGui::SameLine();
 		ImGui::TextColored(ImVec4(0.55f, 0.78f, 1.0f, 1.0f), "%s", state.injectionMethod.c_str());
-		ImGui::EndChild();
 	}
+	ImGui::EndChild();
 
 	ImGui::SetCursorPos(ImVec2(18.0f, TitleBarHeight + 282.0f));
-	if (ImGui::BeginChild("##action-card", ImVec2(size.x - 36.0f, 156.0f), true, ImGuiWindowFlags_NoScrollbar))
+	const bool actionCardVisible = ImGui::BeginChild("##action-card", ImVec2(size.x - 36.0f, 156.0f), true, ImGuiWindowFlags_NoScrollbar);
+	if (actionCardVisible)
 	{
 		const bool ready = targetInput.front() != '\0' && dllPathInput.front() != '\0';
 		ImGui::TextColored(ImVec4(0.38f, 0.76f, 1.0f, 1.0f), "OPERATION");
@@ -299,8 +307,8 @@ void InjectorView::Render(bool& shouldClose)
 		}
 		if (state.totalBytes > 0)
 			ImGui::TextDisabled("Payload transfer  •  %zu / %zu bytes", state.bytesWritten, state.totalBytes);
-		ImGui::EndChild();
 	}
+	ImGui::EndChild();
 
 	ImGui::SetCursorPos(ImVec2(18.0f, size.y - 30.0f));
 	ImGui::TextDisabled("LEAK  /  %s", leak::app::Metadata.build);

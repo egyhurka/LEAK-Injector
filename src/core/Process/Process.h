@@ -23,6 +23,7 @@ namespace injector::process
 	[[nodiscard]] HANDLE Open(DWORD processId, DWORD access = NULL);
 	void Close(HANDLE& handle);
 
+	[[nodiscard]] std::wstring MakeDllCopyToTemp(const std::wstring& dllpath);
 	[[nodiscard]] SIZE_T GetRemotePathSize(const std::wstring& dllPath);
 	[[nodiscard]] LPVOID AllocateRemotePath(HANDLE process, SIZE_T pathSize);
 	[[nodiscard]] BOOL FreeRemotePath(HANDLE process, LPVOID remotePath);

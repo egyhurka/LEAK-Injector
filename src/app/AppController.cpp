@@ -26,7 +26,7 @@ void AppController::SetDllPath(std::string dllPath)
 		}
 
 		state.status = "File selected";
-		injector.LoadDllPath(std::wstring(state.dllPath.begin(), state.dllPath.end()));
+		injector.LoadDll(std::wstring(state.dllPath.begin(), state.dllPath.end()));
 	}
 }
 
@@ -55,6 +55,27 @@ void AppController::Dispatch(const UiAction action)
 				break;
 		}
 	
+		case UiAction::ReloadDll:
+		{
+			if (state.busy)
+				break;
+
+			if (state.dllPath.empty())
+			{
+				state.status = "Select a DLL file first";
+				break;
+			}
+
+			const std::string sourcePath = state.dllPath;
+			SetDllPath(sourcePath);
+
+			state.bytesWritten = 0;
+			state.totalBytes = 0;
+			state.progress = 0.0f;
+			state.status = "DLL reloaded";
+			break;
+		}
+
 		case UiAction::Inject:
 		{
 			if (state.busy)

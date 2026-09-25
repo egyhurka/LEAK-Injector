@@ -16,6 +16,7 @@ public:
 	{
 		ValidateTarget,
 		SelectDll,
+		ReloadDll,
 		Inject,
 		Clear,
 		Update

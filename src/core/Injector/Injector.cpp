@@ -9,10 +9,12 @@ void Injector::LoadProcessId(const DWORD id)
 	processId = id;
 }
 
-void Injector::LoadDllPath(const std::wstring& path)
+void Injector::LoadDll(const std::wstring& path)
 {
-	dllPath = path;
-	dllPathSize = process::GetRemotePathSize(dllPath);
+	std::wstring p = process::MakeDllCopyToTemp(path);
+
+	dllPath = p;
+	dllPathSize = process::GetRemotePathSize(p);
 }
 
 bool Injector::Inject(InjectionMethod method)

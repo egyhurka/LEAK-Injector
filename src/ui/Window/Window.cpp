@@ -44,6 +44,7 @@ void Window::Create(const unsigned int width, const unsigned int height)
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	ImGui::GetIO().IniFilename = nullptr;
 	view = std::make_unique<InjectorView>(window, controller, state);
 	ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
 	ImGui_ImplSDLRenderer3_Init(renderer);

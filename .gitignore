@@ -83,5 +83,3 @@ Desktop.ini
 .env.*
 !.env.example
 *.ini
-imgui.ini
-imgui.ini

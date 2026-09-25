@@ -1,7 +1,11 @@
 #include "Process.h"
 
+#include <random>
+#include <filesystem>
 #include <tlhelp32.h>
 #include <utility>
+
+#define DLL_TEMP_DIRECTORY_NAME L"LInjectorDllTemp"
 
 namespace injector::process
 {
@@ -78,6 +82,48 @@ namespace injector::process
 		{
 			CloseHandle(handle);
 			handle = nullptr;
+		}
+	}
+
+	std::wstring MakeDllCopyToTemp(const std::wstring& dllpath)
+	{
+		namespace fs = std::filesystem;
+
+		try
+		{
+			fs::path srcPath(dllpath);
+			std::wstring originalName = srcPath.stem().wstring();
+			std::wstring extension = srcPath.extension().wstring();
+
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			std::uniform_int_distribution<> dis(0, 15);
+
+
+			std::stringstream ss;
+			for (int i = 0; i < 4; ++i) {
+				ss << std::hex << dis(gen);
+			}
+
+			std::string randomStr = ss.str();
+			std::wstring tag(randomStr.begin(), randomStr.end());
+
+			std::wstring uniqueFileName = originalName + L"_" + tag + extension;
+
+			fs::path tempDir = fs::temp_directory_path() / DLL_TEMP_DIRECTORY_NAME;
+			if (!fs::exists(tempDir)) 
+			{
+				fs::create_directories(tempDir);
+			}
+
+			fs::path destPath = tempDir / uniqueFileName;
+			fs::copy_file(srcPath, destPath, fs::copy_options::overwrite_existing);
+
+			return destPath.wstring();
+		}
+		catch (...)
+		{
+			return L"";
 		}
 	}
 

@@ -15,7 +15,7 @@ namespace injector
 	{
 	public:
 		void LoadProcessId(DWORD processId);
-		void LoadDllPath(const std::wstring& path);
+		void LoadDll(const std::wstring& path);
 
 		[[nodiscard]] bool Inject(InjectionMethod method = Standard_LoadLibrary);
 		[[nodiscard]] SIZE_T BytesWritten() const noexcept { return bytesWritten; }

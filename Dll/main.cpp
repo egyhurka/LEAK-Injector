@@ -11,11 +11,14 @@ unsigned __stdcall MainThread(void* parameter)
 
     while (!worker->StopRequested())
     {
-        // write here
+        // EXIT (Terminate Thread, the dll stays loaded!)
+        if (GetAsyncKeyState(VK_F9) && 0x800)
+            break;
 
         Sleep(10);
     }
 
+    worker->Stop();
     //leak::console::Close();
 
     return 0;
