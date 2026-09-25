@@ -14,6 +14,7 @@
     <ClCompile Include="third_party\imgui-1.92.9b\backends\imgui_impl_sdlrenderer3.cpp" />
     <ClCompile Include="src\app\AppController.cpp" />
     <ClCompile Include="src\core\Injector\Injector.cpp" />
+    <ClCompile Include="src\core\File\File.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\SDL3\SDL.h" />
@@ -111,5 +112,6 @@
     <ClInclude Include="src\app\AppState.h" />
     <ClInclude Include="src\app\AppMetadata.h" />
     <ClInclude Include="src\core\Injector\Injector.h" />
+    <ClInclude Include="src\core\File\File.h" />
   </ItemGroup>
 </Project>

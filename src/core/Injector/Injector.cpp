@@ -1,5 +1,6 @@
 #include "Injector.h"
 #include "Process/Process.h"
+#include "File/File.h"
 
 namespace injector
 {
@@ -11,10 +12,10 @@ void Injector::LoadProcessId(const DWORD id)
 
 void Injector::LoadDll(const std::wstring& path)
 {
-	std::wstring p = process::MakeDllCopyToTemp(path);
+	std::wstring p = file::CopyFileToTempDir(path);
 
 	dllPath = p;
-	dllPathSize = process::GetRemotePathSize(p);
+	dllPathSize = file::GetFilePathSize(p);
 }
 
 bool Injector::Inject(InjectionMethod method)

@@ -2,12 +2,12 @@
 
 #include <process.h>
 
-leak::dll::Worker::~Worker()
+leak::thread::Worker::~Worker()
 {
 	Stop();
 }
 
-bool leak::dll::Worker::Start(ThreadFunction workerFunction)
+bool leak::thread::Worker::Start(ThreadFunction workerFunction)
 {
     if (workerFunction == nullptr)
         return false;
@@ -40,7 +40,7 @@ bool leak::dll::Worker::Start(ThreadFunction workerFunction)
     return true;
 }
 
-bool leak::dll::Worker::Stop(DWORD timeoutMs)
+bool leak::thread::Worker::Stop(DWORD timeoutMs)
 {
     if (!running.exchange(false))
         return true;
@@ -68,18 +68,18 @@ bool leak::dll::Worker::Stop(DWORD timeoutMs)
     return true;
 }
 
-bool leak::dll::Worker::IsRunning() const noexcept
+bool leak::thread::Worker::IsRunning() const noexcept
 {
     return running.load();
 }
 
-bool leak::dll::Worker::StopRequested() const noexcept
+bool leak::thread::Worker::StopRequested() const noexcept
 {
     return stopEvent != nullptr &&
         WaitForSingleObject(stopEvent, 0) == WAIT_OBJECT_0;
 }
 
-unsigned __stdcall leak::dll::Worker::ThreadEntry(void* parameter)
+unsigned __stdcall leak::thread::Worker::ThreadEntry(void* parameter)
 {
     auto* worker = static_cast<Worker*>(parameter);
 

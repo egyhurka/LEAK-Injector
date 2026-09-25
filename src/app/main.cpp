@@ -3,10 +3,14 @@
 #include "ui/Window/Window.h"
 #include "AppController.h"
 #include "Injector/Injector.h"
+#include "File/File.h"
 #include "AppState.h"
 
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 {
+	// Clean up leftover DLL copies
+	injector::file::ClearTempDirectory();
+
 	AppState state;
 	injector::Injector injector;
 	AppController controller(state, injector);

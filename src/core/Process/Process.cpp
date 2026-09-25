@@ -1,11 +1,9 @@
 #include "Process.h"
 
-#include <random>
-#include <filesystem>
 #include <tlhelp32.h>
 #include <utility>
 
-#define DLL_TEMP_DIRECTORY_NAME L"LInjectorDllTemp"
+#include "File/File.h"
 
 namespace injector::process
 {
@@ -85,53 +83,6 @@ namespace injector::process
 		}
 	}
 
-	std::wstring MakeDllCopyToTemp(const std::wstring& dllpath)
-	{
-		namespace fs = std::filesystem;
-
-		try
-		{
-			fs::path srcPath(dllpath);
-			std::wstring originalName = srcPath.stem().wstring();
-			std::wstring extension = srcPath.extension().wstring();
-
-			std::random_device rd;
-			std::mt19937 gen(rd());
-			std::uniform_int_distribution<> dis(0, 15);
-
-
-			std::stringstream ss;
-			for (int i = 0; i < 4; ++i) {
-				ss << std::hex << dis(gen);
-			}
-
-			std::string randomStr = ss.str();
-			std::wstring tag(randomStr.begin(), randomStr.end());
-
-			std::wstring uniqueFileName = originalName + L"_" + tag + extension;
-
-			fs::path tempDir = fs::temp_directory_path() / DLL_TEMP_DIRECTORY_NAME;
-			if (!fs::exists(tempDir)) 
-			{
-				fs::create_directories(tempDir);
-			}
-
-			fs::path destPath = tempDir / uniqueFileName;
-			fs::copy_file(srcPath, destPath, fs::copy_options::overwrite_existing);
-
-			return destPath.wstring();
-		}
-		catch (...)
-		{
-			return L"";
-		}
-	}
-
-	SIZE_T GetRemotePathSize(const std::wstring& dllPath)
-	{
-		return (dllPath.length() + 1) * sizeof(wchar_t);
-	}
-
 	LPVOID AllocateRemotePath(HANDLE process, const SIZE_T pathSize)
 	{
 		return VirtualAllocEx(process, nullptr, pathSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
@@ -145,7 +96,7 @@ namespace injector::process
 	BOOL WriteRemotePath(HANDLE process, LPVOID remotePath, const std::wstring& dllPath, SIZE_T* bytesWrittenOut)
 	{
 		SIZE_T bytesWritten = 0;
-		const SIZE_T pathSize = GetRemotePathSize(dllPath);
+		const SIZE_T pathSize = file::GetFilePathSize(dllPath);
 		const BOOL succeeded = WriteProcessMemory(process, remotePath, dllPath.c_str(), pathSize, &bytesWritten);
 		if (bytesWrittenOut != nullptr)
 			*bytesWrittenOut = bytesWritten;

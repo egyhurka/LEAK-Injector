@@ -162,12 +162,14 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="src\Mem.h" />
     <ClInclude Include="src\Worker.h" />
     <ClInclude Include="src\Console.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\Mem.cpp" />
     <ClCompile Include="src\Worker.cpp" />
     <ClCompile Include="src\Console.cpp" />
   </ItemGroup>

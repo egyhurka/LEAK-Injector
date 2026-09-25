@@ -3,7 +3,7 @@
 #include <Windows.h>
 #include <atomic>
 
-namespace leak::dll
+namespace leak::thread
 {
     class Worker final
     {

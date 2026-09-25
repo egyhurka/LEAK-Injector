@@ -102,19 +102,21 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(ProjectDir)src\core;$(ProjectDir)src;$(ProjectDir)third_party\SDL-release-3.4.16\include;$(ProjectDir)third_party\imgui-1.92.9b;$(ProjectDir)third_party\imgui-1.92.9b\backends;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)third_party\SDL-release-3.4.16\VisualC\SDL\Win32\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)third_party\SDL-static-x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL3-static.lib;setupapi.lib;winmm.lib;imm32.lib;version.lib;user32.lib;gdi32.lib;ole32.lib;oleaut32.lib;cfgmgr32.lib;hid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
     </Manifest>
     <PostBuildEvent>
-      <Command>copy /Y "$(ProjectDir)third_party\SDL-release-3.4.16\VisualC\SDL\Win32\Release\SDL3.dll" "$(OutDir)SDL3.dll"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -168,6 +170,7 @@
   <ItemGroup>
     <ClCompile Include="src\app\AppController.cpp" />
     <ClCompile Include="src\app\main.cpp" />
+    <ClCompile Include="src\core\File\File.cpp" />
     <ClCompile Include="src\core\Injector\Injector.cpp" />
     <ClCompile Include="src\core\Process\Process.cpp" />
     <ClCompile Include="src\ui\Window\Window.cpp" />
@@ -272,6 +275,7 @@
     <ClInclude Include="src\app\AppController.h" />
     <ClInclude Include="src\app\AppState.h" />
     <ClInclude Include="src\app\AppMetadata.h" />
+    <ClInclude Include="src\core\File\File.h" />
     <ClInclude Include="src\core\Injector\Injector.h" />
     <ClInclude Include="src\core\Process\Process.h" />
     <ClInclude Include="src\ui\Window\Window.h" />
