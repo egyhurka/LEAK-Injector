@@ -1,7 +1,8 @@
 #include "Console.h"
 
-#include <cstdio>
+#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <cstdio>
 
 namespace leak::console {
     FILE* file = nullptr;

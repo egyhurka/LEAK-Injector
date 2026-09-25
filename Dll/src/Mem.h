@@ -1,10 +1,10 @@
 #pragma once
 
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <vector>
 #include <cstring>
 #include <type_traits>
-#include <cstdint>
 
 namespace leak::mem
 {

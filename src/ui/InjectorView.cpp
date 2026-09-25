@@ -6,7 +6,6 @@
 #include "imgui.h"
 #include "app/AppMetadata.h"
 
-
 namespace
 {
 	constexpr int TitleBarHeight = 48;
